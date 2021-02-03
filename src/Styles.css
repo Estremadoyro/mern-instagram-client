@@ -1,0 +1,18 @@
+.gallery {
+  display: flex; 
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.item { 
+  width: 30%;
+}
+
+.card-img-top {
+  width: 300px;
+}
+
+
+.post-border { 
+  border: 2px #dbdbdb solid; 
+}
