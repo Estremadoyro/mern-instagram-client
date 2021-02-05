@@ -3,46 +3,65 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 
 const CreatePost = () => {
+  const [fileInputState, setFileInputState] = useState("");
+  const [previewSource, setPreviewSource] = useState();
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [photo, setPhoto] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
-  const history = useHistory();
-
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState("");
 
-  const updatePhoto = (e) => { 
-    setPhoto(e.target.files[0]); 
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    data.append("file", photo);
-    data.append("upload_preset", "insta-clone");
-    data.append("cloud_name", "nova-solutions");
-    data.append("title", title);
-    data.append("body", body)
-
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    previewFile(file);
+    setFileInputState(e.target.value);
+  };
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
+  };
+  const uploadImage = async (base64EncodedImage) => {
+    console.log(base64EncodedImage);
     try {
-      const uploadImageServer = await axios.post("/createpost", data, {
+      const postImage = await fetch("/createpost", {
         method: "POST",
-        headers: { 
-          //'Content-Type': 'multipart/form-data',
-          'Content-Type': 'Application/json',
-          'Authorization': "Bearer " + localStorage.getItem("jwt"),
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
         },
-      }); 
-      const response = uploadImageServer.data;
-      console.log("wot")
-      console.log(response); 
+        body: JSON.stringify({
+          title: title,
+          body: body,
+          image: base64EncodedImage,
+        }),
+      });
+      const response = await postImage.json();
+      console.log(response);
     } catch (err) {
-      console.log(err); 
+      console.log(err);
     }
-    return;
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+    if (!previewSource) {
+      setError("Choose file owo");
+      return;
+    }
+    try {
+      setLoading(true);
+      uploadImage(previewSource);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
+
+    return;
+  };
   return (
     <Fragment>
       <div className="card">
@@ -84,15 +103,29 @@ const CreatePost = () => {
             <div className="custom-file my-3">
               <input
                 type="file"
+                name="image"
                 className="custom-file-input"
                 id="validatedCustomFile"
-                onChange={updatePhoto}
+                onChange={handleFileInputChange}
+                value={fileInputState}
                 required
               />
-              <div className="invalid-feedback">Example invalid custom file feedback </div>
+              <div className="invalid-feedback">
+                Example invalid custom file feedback{" "}
+              </div>
             </div>
 
-            <button disabled={loading} className="btn btn-lg btn-primary w-100 text-center mt-2">
+            {previewSource && (
+              <img
+                src={previewSource}
+                alt="chosen"
+                className="img-fluid d-block mx-auto text-center"
+              />
+            )}
+            <button
+              disabled={loading}
+              className="btn btn-lg btn-primary w-100 text-center mt-2"
+            >
               Post!
             </button>
           </form>
