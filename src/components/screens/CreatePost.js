@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 
 const CreatePost = () => {
   const [fileInputState, setFileInputState] = useState("");
@@ -9,7 +9,8 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -25,6 +26,7 @@ const CreatePost = () => {
   };
   const uploadImage = async (base64EncodedImage) => {
     console.log(base64EncodedImage);
+    setLoading(true);
     try {
       const postImage = await fetch("/createpost", {
         method: "POST",
@@ -40,25 +42,26 @@ const CreatePost = () => {
       });
       const response = await postImage.json();
       console.log(response);
+      history.go(0);
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
+
     if (!previewSource) {
       setError("Choose file owo");
       return;
     }
     try {
-      setLoading(true);
       uploadImage(previewSource);
     } catch (err) {
       console.log(err);
     }
-    setLoading(false);
 
     return;
   };
