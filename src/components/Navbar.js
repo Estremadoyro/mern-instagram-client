@@ -1,12 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useUserAuth } from "../contexts/UserContext";
 
+import "../Styles.css";
+
 export default function Navbar() {
-  const { authState } = useUserAuth();
-  console.log(authState);
+  const { authState, authActions } = useUserAuth();
+  const history = useHistory();
+
+  const logout = () => {
+    localStorage.clear();
+    authActions.userLogOut();
+    history.push("/login");
+  };
   return (
-    <nav className="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           InstaLoL
@@ -44,6 +52,18 @@ export default function Navbar() {
                     Create Post
                   </Link>
                 </li>
+
+                <ul className="nav navbar-lg ml-auto">
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className="btn btn-danger text-white active my-auto"
+                      onClick={logout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
               </>
             ) : (
               <>

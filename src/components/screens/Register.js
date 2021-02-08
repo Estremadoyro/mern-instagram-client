@@ -4,6 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 const Register = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const history = useHistory();
@@ -34,6 +35,7 @@ const Register = () => {
           username: userName,
           email: email,
           password: password,
+          name: name,
         }),
       });
 
@@ -79,6 +81,19 @@ const Register = () => {
               />
             </div>
 
+            <div className="form-group" id="name">
+              <div className="label">Name</div>
+              <input
+                type="text"
+                className="form-control"
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                value={name}
+                required
+              />
+            </div>
+
             <div className="form-group" id="email">
               <div className="label">Email</div>
               <input
@@ -118,7 +133,10 @@ const Register = () => {
               />
             </div>
 
-            <button disabled={loading} className="btn btn-lg btn-primary w-100 text-center mt-2">
+            <button
+              disabled={loading}
+              className="btn btn-lg btn-primary w-100 text-center mt-2"
+            >
               Sign Up
             </button>
           </form>

@@ -42,7 +42,7 @@ const CreatePost = () => {
       });
       const response = await postImage.json();
       console.log(response);
-      history.go(0);
+      history.push("/");
     } catch (err) {
       console.log(err);
     }

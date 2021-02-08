@@ -1,18 +1,24 @@
+body {
+	position: relative;
+}
 .gallery {
-  display: flex; 
-  flex-wrap: wrap;
-  justify-content: space-around;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
 }
 
-.item { 
-  width: 30%;
+.item {
+	width: 30%;
 }
 
 .card-img-top {
-  width: 300px;
+	width: 300px;
 }
 
+.post-border {
+	border: 2px #dbdbdb solid;
+}
 
-.post-border { 
-  border: 2px #dbdbdb solid; 
+.logout-icon {
+	vertical-align: middle;
 }

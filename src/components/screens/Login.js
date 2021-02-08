@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import {useUserAuth} from "../../contexts/UserContext";
+import { useUserAuth } from "../../contexts/UserContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +10,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  const {authActions} = useUserAuth(); 
+  const { authActions } = useUserAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,8 +36,8 @@ const Login = () => {
       if (response.error) {
         setError(response.error);
       } else {
-        localStorage.setItem("jwt", response.token); 
-        localStorage.setItem("user", JSON.stringify(response.user)); 
+        localStorage.setItem("jwt", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
         authActions.authStateChanged(response.user);
 
         setError("");
@@ -46,8 +46,9 @@ const Login = () => {
     } catch (error) {
       console.log(error);
     }
-    return (() => {setLoading(false);}); 
-    
+    return () => {
+      setLoading(false);
+    };
   };
 
   return (
