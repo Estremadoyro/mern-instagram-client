@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useUserAuth } from "../../contexts/UserContext";
+import { login } from "../../api/Auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,42 +13,26 @@ const Login = () => {
 
   const { authActions } = useUserAuth();
 
-  const handleSubmit = (e) => {
+  const loginUser = async (e) => {
     e.preventDefault();
-    loginUser();
-    return;
-  };
+    setLoading(true);
+    setError("");
+    let u = false;
 
-  const loginUser = async () => {
-    try {
-      setLoading(true);
-      const post = await fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      const response = await post.json();
-      console.log(response);
-      if (response.error) {
-        setError(response.error);
+    const post = await login(email, password);
+    if (!u) {
+      if (post.error) {
+        setError(post.error);
       } else {
-        localStorage.setItem("jwt", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-        authActions.authStateChanged(response.user);
-
-        setError("");
+        localStorage.setItem("jwt", post.data.token);
+        localStorage.setItem("user", JSON.stringify(post.data.user));
+        authActions.authStateChanged(post.data.user);
         history.push("/");
       }
-    } catch (error) {
-      console.log(error);
+      setLoading(false);
     }
     return () => {
-      setLoading(false);
+      u = true;
     };
   };
 
@@ -62,7 +47,7 @@ const Login = () => {
               {error}
             </div>
           )}
-          <form className="form" onSubmit={handleSubmit}>
+          <form className="form" onSubmit={loginUser}>
             <div className="form-group" id="email">
               <div className="label">Email</div>
               <input

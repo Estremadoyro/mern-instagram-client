@@ -1,8 +1,9 @@
 import React, { Fragment, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import { register } from "../../api/Auth";
 
 const Register = () => {
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -12,48 +13,29 @@ const Register = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //Check password & confirmPassword match
-  const handleSubmit = (e) => {
+  const postNewUser = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       return setError("Passwords do not match");
     }
-    postNewUser();
-    return;
-  };
 
-  //POST new user
-  const postNewUser = async () => {
-    try {
-      setLoading(true);
-      const post = await fetch("/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: userName,
-          email: email,
-          password: password,
-          name: name,
-        }),
-      });
+    setLoading(true);
+    setError("");
+    let u = false;
 
-      const response = await post.json();
-      console.log(response);
-      if (response.error) {
-        setError(response.error);
+    const post = await register(email, username, name, password);
+    if (!u) {
+      if (post.error) {
+        setError(post.error);
+        console.log(post.error);
       } else {
-        setError("");
         history.push("/login");
       }
-    } catch (error) {
-      console.log(error);
+      setLoading(false);
     }
-    console.log("owo");
-
-    setLoading(false);
-    return;
+    return () => {
+      u = true;
+    };
   };
 
   return (
@@ -67,16 +49,16 @@ const Register = () => {
               {error}
             </div>
           )}
-          <form className="form" onSubmit={handleSubmit}>
+          <form className="form" onSubmit={postNewUser}>
             <div className="form-group" id="username">
               <div className="label">Username</div>
               <input
                 type="text"
                 className="form-control"
                 onChange={(e) => {
-                  setUserName(e.target.value);
+                  setUsername(e.target.value);
                 }}
-                value={userName}
+                value={username}
                 required
               />
             </div>
